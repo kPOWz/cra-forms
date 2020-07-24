@@ -1,7 +1,7 @@
 import {brown, purple, lime } from '@material-ui/core/colors';
-import { createMuiTheme } from '@material-ui/core/styles';
+import { createMuiTheme, responsiveFontSizes } from '@material-ui/core/styles';
 
-const darkTheme = createMuiTheme({
+let darkTheme = createMuiTheme({
     palette: {
         primary: {
             main: purple[50],
@@ -29,5 +29,5 @@ const darkTheme = createMuiTheme({
         }
     }
 })
-
+darkTheme = responsiveFontSizes(darkTheme);
 export default darkTheme;
