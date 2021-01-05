@@ -1,10 +1,11 @@
-import {brown, purple, lime } from '@material-ui/core/colors';
+import {brown, purple, lime, deepOrange } from '@material-ui/core/colors';
 import { createMuiTheme, responsiveFontSizes } from '@material-ui/core/styles';
 
 let darkTheme = createMuiTheme({
     palette: {
+        type: 'dark',
         primary: {
-            main: purple[50],
+            main: purple.A100,
         },
         secondary: {
             main: lime.A400,
@@ -23,9 +24,10 @@ let darkTheme = createMuiTheme({
         divider: 'rgba(brown[900], 0.12)',
         text: {
             primary: purple[50],
-            secondary: purple.A100,
+            secondary: purple[50],
             disabled: purple.A200,
             hint: purple.A200,
+            error: deepOrange[500]
         }
     }
 })

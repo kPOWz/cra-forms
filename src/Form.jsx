@@ -19,60 +19,60 @@ const useStyles = makeStyles((theme) => ({
   }));
 
 const Form = props => {
-    const [error, setError] = React.useState(false);
+    const [error, setError] = React.useState({});
     const [validated, setValidated] = React.useState(false);
     const classes = useStyles();
     const handleSubmit = (event) => {
         const form = event.currentTarget;
-        if (form.checkValidity() === false) {
+        const isPassFormValidationConstraints = form.checkValidity();
+        if ( isPassFormValidationConstraints === false) {
+          console.log('invalid form')
           event.preventDefault();
           event.stopPropagation();
         }
-    
-        setValidated(true);
+        // TODO: in real world do submit
+        setValidated(isPassFormValidationConstraints);
       };
     const handleChange = (event) => {
-        console.log(event.target.name)
-        // is valid
-        setError(Object.assign(error, {[event.target.name]: true}))
         setValidated(false);
+        const isPassValidationConstraints = event.target.checkValidity();
+        setError(Object.assign(error, {[event.target.name]: !isPassValidationConstraints}))
+        setValidated(!isPassValidationConstraints);
     }
 
     return (
-
-
         <form className={classes.root} validated={validated} onChange={handleChange}>  
-            <FormControl className={classes.textField} error={error}>
-                <TextField id={"example-required"} name={"example-required"} label="Required" required error={true}/>
-                <FormHelperText error={true}>{'required'}</FormHelperText>
+            <FormControl className={classes.textField} error={error["example-required"]}>
+                <TextField id={"example-required"} name={"example-required"} label="Required" required error={error["example-required"]}/>
+                <FormHelperText error={error['example-required']}>{'required'}</FormHelperText>
             </FormControl>
-            <FormControl  className={classes.textField} error={error} >
-                <TextField id="example-pattern" name="example-pattern" label="Pattern" InputProps={{ inputProps: { pattern: "$" } }}/>
-                <FormHelperText>{'pattern include "$"'}</FormHelperText>
+            <FormControl  className={classes.textField} error={error['example-pattern']} >
+                <TextField id="example-pattern" name="example-pattern" label="Pattern" InputProps={{ inputProps: { pattern: "$" } }} error={error["example-pattern"]}/>
+                <FormHelperText error={error['example-pattern']}>{'pattern include "$"'}</FormHelperText>
             </FormControl>
-            <FormControl  className={classes.textField} error={error} >
-                <TextField id="example-maxlength" name="example-maxlength" label="Max length" InputProps={{ inputProps: { maxlength: 6 } }}/>
-                <FormHelperText>{'max length 6'}</FormHelperText>
+            <FormControl  className={classes.textField} error={error['example-maxlength']} >
+                <TextField id="example-maxlength" name="example-maxlength" label="Max length" InputProps={{ inputProps: { maxLength: 6 } }} error={error['example-maxlength']}/>
+                <FormHelperText error={error['example-maxlength']}>{'max length 6'}</FormHelperText>
             </FormControl>
-            <FormControl  className={classes.textField} error={error} >
-                <TextField id="example-email" name="example-email" type="email" label="Email"/>
-                <FormHelperText>{'email'}</FormHelperText>
+            <FormControl  className={classes.textField} error={error['example-email']} >
+                <TextField id="example-email" name="example-email" type="email" label="Email" error={error['example-email']}/>
+                <FormHelperText error={error['example-email']}>{'email'}</FormHelperText>
             </FormControl>
-            <FormControl  className={classes.textField} error={error} >
-                <TextField id="example-url" name="example-url" type="url" label="URL"/>
-                <FormHelperText>{'URL'}</FormHelperText>
+            <FormControl  className={classes.textField} error={error['example-url']} >
+                <TextField id="example-url" name="example-url" type="url" label="URL" error={error['example-url']}/>
+                <FormHelperText error={error['example-url']}>{'URL'}</FormHelperText>
             </FormControl>
-            <FormControl  className={classes.textField} error={error} >
-                <TextField id="example-number" name="example-number" type="number" label="Number"/>
-                <FormHelperText>{'Number'}</FormHelperText>
+            <FormControl  className={classes.textField} error={error['example-number']} >
+                <TextField id="example-number" name="example-number" type="number" label="Number" error={error['example-number']}/>
+                <FormHelperText error={error['example-number']}>{'Number'}</FormHelperText>
             </FormControl>
-            <FormControl  className={classes.textField} error={error} >
-                <TextField id="example-numbermax" name="example-numbermax" type="number" label="Number max" InputProps={{ inputProps: { max: 10 } }}/>
-                <FormHelperText>{'Number max'}</FormHelperText>
+            <FormControl  className={classes.textField} error={error['example-numbermax']} >
+                <TextField id="example-numbermax" name="example-numbermax" type="number" label="Number max" InputProps={{ inputProps: { max: 10 } }} error={error['example-numbermax']}/>
+                <FormHelperText error={error['example-numbermax']}>{'Number max'}</FormHelperText>
             </FormControl>
-            <FormControl  className={classes.textField} error={error} >
-                <TextField id="example-numbermin" name="example-numbermin" type="number" label="Number min" InputProps={{ inputProps: { min: 3 } }}/>
-                <FormHelperText>{'Number min'}</FormHelperText>
+            <FormControl  className={classes.textField} error={error['example-numbermin']} >
+                <TextField id="example-numbermin" name="example-numbermin" type="number" label="Number min" InputProps={{ inputProps: { min: 3 } }} error={error['example-numbermin']}/>
+                <FormHelperText error={error['example-numbermin']}>{'Number min'}</FormHelperText>
             </FormControl>
             
             <Button color="primary"

@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import Form from './Form'
 
 describe('Form', () => {
@@ -57,6 +57,63 @@ describe('Form', () => {
 
         const maybeNumberMinInput = screen.getAllByRole('spinbutton', {name: 'Number min'});
         expect(maybeNumberMinInput.length).toEqual(1);
+    });
+
+    describe.each([
+        ['example-required', 'takeMeAway', '', 'textbox'],
+        ['example-pattern', '*', undefined, 'textbox'],
+        ['example-maxlength', '1234567', undefined, 'textbox'],
+        ['example-email', 'notAnEmail', undefined, 'textbox'],
+        ['example-url', 'notAURL', undefined, 'textbox'],
+        ['example-numbermax', 11, undefined, 'spinbutton'],
+        ['example-numbermin', 2, undefined, 'spinbutton'],
+        ['example-number', 'notANumber', undefined, 'spinbutton'],
+      ])('.when aria-invalid for %s input', (id, changeValue1, changeValue2, ariaRole) => {
+        it('should turn on error mode only for target form group', () => {
+            render(<Form />);
+
+            const observedForAriaInvalidCheck = screen.getAllByRole(ariaRole);
+            const invalidExpectedIndex = observedForAriaInvalidCheck.findIndex((element) => 
+                element.getAttribute('id') === id);
+
+            fireEvent.change(observedForAriaInvalidCheck[invalidExpectedIndex], {target: {value: changeValue1}});
+            if(changeValue2 !== undefined) {
+                fireEvent.change(observedForAriaInvalidCheck[invalidExpectedIndex], {target: {value: ''}});
+            }
+
+            expect(observedForAriaInvalidCheck[invalidExpectedIndex]).toBeInvalid();
+            delete observedForAriaInvalidCheck[invalidExpectedIndex];
+            observedForAriaInvalidCheck.forEach( i => {
+                expect(i).toBeValid();
+            });
+        });
+    });
+
+    describe.each([
+        ['Required', 'takeMeAway', '', 'textbox'],
+        ['Pattern', '*', undefined, 'textbox'],
+        ['Max length', '1234567', undefined, 'textbox'],
+        ['Email', 'notAnEmail', undefined, 'textbox'],
+        ['URL', 'notAURL', undefined, 'textbox'],
+        ['Number max', 11, undefined, 'spinbutton'],
+        ['Number min', 2, undefined, 'spinbutton'],
+        ['Number', 'notANumber', undefined, 'spinbutton'],
+      ])('.when aria-invalid for %s input', (accessibleName, changeValue1, changeValue2, ariaRole) => {
+        it('should add all the error styles', () => {
+            render(<Form />);
+
+            const maybeRequiredInput = screen.getAllByRole(ariaRole, {name: accessibleName});
+
+            fireEvent.change(maybeRequiredInput[0], {target: {value: changeValue1}});
+            if(changeValue2 !== undefined) {
+                fireEvent.change(maybeRequiredInput[0], {target: {value: changeValue2}});
+            }
+
+            expect(maybeRequiredInput[0]).toBeInvalid();
+            expect(maybeRequiredInput[0]).toHaveAttribute('aria-invalid', 'true');
+            expect(maybeRequiredInput[0].parentElement).toHaveClass('Mui-error');
+            expect(maybeRequiredInput[0].parentElement.previousElementSibling).toHaveClass('Mui-error');
+        });
     });
 
     it('should always assgin TextField an id for accessibility', () => {
