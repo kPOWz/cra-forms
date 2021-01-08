@@ -61,13 +61,10 @@ describe('Form', () => {
 
     describe.each([
         ['example-required', 'takeMeAway', '', 'textbox'],
-        ['example-pattern', '*', undefined, 'textbox'],
-        ['example-maxlength', '1234567', undefined, 'textbox'],
         ['example-email', 'notAnEmail', undefined, 'textbox'],
         ['example-url', 'notAURL', undefined, 'textbox'],
         ['example-numbermax', 11, undefined, 'spinbutton'],
         ['example-numbermin', 2, undefined, 'spinbutton'],
-        ['example-number', 'notANumber', undefined, 'spinbutton'],
       ])('.when aria-invalid for %s input', (id, changeValue1, changeValue2, ariaRole) => {
         it('should turn on error mode only for target form group', () => {
             render(<Form />);
@@ -78,41 +75,90 @@ describe('Form', () => {
 
             fireEvent.change(observedForAriaInvalidCheck[invalidExpectedIndex], {target: {value: changeValue1}});
             if(changeValue2 !== undefined) {
-                fireEvent.change(observedForAriaInvalidCheck[invalidExpectedIndex], {target: {value: ''}});
+                fireEvent.change(observedForAriaInvalidCheck[invalidExpectedIndex], {target: {value: changeValue2}});
             }
 
             expect(observedForAriaInvalidCheck[invalidExpectedIndex]).toBeInvalid();
-            delete observedForAriaInvalidCheck[invalidExpectedIndex];
+            observedForAriaInvalidCheck.splice(invalidExpectedIndex, 1);
             observedForAriaInvalidCheck.forEach( i => {
-                expect(i).toBeValid();
+                if (i.getAttribute('id') !== 'example-required') {
+                    expect(i).toBeValid();
+                }
             });
         });
     });
 
     describe.each([
         ['Required', 'takeMeAway', '', 'textbox'],
-        ['Pattern', '*', undefined, 'textbox'],
-        ['Max length', '1234567', undefined, 'textbox'],
         ['Email', 'notAnEmail', undefined, 'textbox'],
         ['URL', 'notAURL', undefined, 'textbox'],
         ['Number max', 11, undefined, 'spinbutton'],
         ['Number min', 2, undefined, 'spinbutton'],
-        ['Number', 'notANumber', undefined, 'spinbutton'],
       ])('.when aria-invalid for %s input', (accessibleName, changeValue1, changeValue2, ariaRole) => {
         it('should add all the error styles', () => {
             render(<Form />);
 
-            const maybeRequiredInput = screen.getAllByRole(ariaRole, {name: accessibleName});
+            const maybeInput = screen.getAllByRole(ariaRole, {name: accessibleName});
+            expect(maybeInput.length).toEqual(1);
 
-            fireEvent.change(maybeRequiredInput[0], {target: {value: changeValue1}});
+            fireEvent.change(maybeInput[0], {target: {value: changeValue1}});
             if(changeValue2 !== undefined) {
-                fireEvent.change(maybeRequiredInput[0], {target: {value: changeValue2}});
+                fireEvent.change(maybeInput[0], {target: {value: changeValue2}});
             }
 
-            expect(maybeRequiredInput[0]).toBeInvalid();
-            expect(maybeRequiredInput[0]).toHaveAttribute('aria-invalid', 'true');
-            expect(maybeRequiredInput[0].parentElement).toHaveClass('Mui-error');
-            expect(maybeRequiredInput[0].parentElement.previousElementSibling).toHaveClass('Mui-error');
+            expect(maybeInput[0]).toBeInvalid();
+            expect(maybeInput[0]).toHaveAttribute('aria-invalid', 'true');
+            expect(maybeInput[0].parentElement).toHaveClass('Mui-error');
+            expect(maybeInput[0].parentElement.previousElementSibling).toHaveClass('Mui-error');
+        });
+    });
+
+    it('should add all the error styles when pattern constraint violated', () => {
+        render(<Form />);
+
+        const maybeInput = screen.getAllByRole('textbox', {name: 'Pattern'});
+        expect(maybeInput.length).toEqual(1);
+
+        //bug in jsdom misses pattern constraint violations, so hard-code validity check
+        fireEvent.change(maybeInput[0], {target: {value: '*', checkValidity: () => false }});
+
+        expect(maybeInput[0]).toBeInvalid();
+        expect(maybeInput[0]).toHaveAttribute('aria-invalid', 'true');
+        expect(maybeInput[0].parentElement).toHaveClass('Mui-error');
+        expect(maybeInput[0].parentElement.previousElementSibling).toHaveClass('Mui-error');
+    });
+
+    it('should add all the error styles when maxlength constraint violated', () => {
+        render(<Form />);
+
+        const maybeInput = screen.getAllByRole('textbox', {name: 'Max length'});
+        expect(maybeInput.length).toEqual(1);
+
+        //bug in jsdom misses max length constraint violations, so hard-code validity check
+        fireEvent.change(maybeInput[0], {target: {value: '1234567', checkValidity: () => false }});
+
+        expect(maybeInput[0]).toBeInvalid();
+        expect(maybeInput[0]).toHaveAttribute('aria-invalid', 'true');
+        expect(maybeInput[0].parentElement).toHaveClass('Mui-error');
+        expect(maybeInput[0].parentElement.previousElementSibling).toHaveClass('Mui-error');
+    });
+
+    describe.each([
+        ['Number', '1', 'notANumber', 'spinbutton'],
+      ])('.when aria-invalid for %s spinbutton', (accessibleName, changeValue1, changeValue2, ariaRole) => {
+        it('should prevent invalid input', () => {
+            render(<Form />);
+
+            const maybeInput = screen.getAllByRole(ariaRole, {name: accessibleName});
+
+            fireEvent.change(maybeInput[0], {target: {value: changeValue1}});
+            expect(maybeInput[0].value).toBe(changeValue1);
+            fireEvent.change(maybeInput[0], {target: {value: changeValue2}});
+
+            expect(maybeInput[0].value).toBe('');
+            expect(maybeInput[0].value).not.toBe(changeValue2);
+            expect(maybeInput[0]).toBeValid();
+            expect(maybeInput[0]).toHaveAttribute('aria-invalid', 'false');
         });
     });
 

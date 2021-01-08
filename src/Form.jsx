@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Form = props => {
     const [error, setError] = React.useState({});
-    const [validated, setValidated] = React.useState(false);
+    const [egg, setEgg] = React.useState({});
     const classes = useStyles();
     const handleSubmit = (event) => {
         const form = event.currentTarget;
@@ -31,19 +31,17 @@ const Form = props => {
           event.stopPropagation();
         }
         // TODO: in real world do submit
-        setValidated(isPassFormValidationConstraints);
       };
     const handleChange = (event) => {
-        setValidated(false);
+        setEgg(Object.assign({}, egg, {[event.target.name]: event.target.value}));
         const isPassValidationConstraints = event.target.checkValidity();
-        setError(Object.assign(error, {[event.target.name]: !isPassValidationConstraints}))
-        setValidated(!isPassValidationConstraints);
+        setError(Object.assign({}, error, {[event.target.name]: !isPassValidationConstraints}));
     }
 
     return (
-        <form className={classes.root} validated={validated} onChange={handleChange}>  
+        <form className={classes.root} onChange={handleChange}>  
             <FormControl className={classes.textField} error={error["example-required"]}>
-                <TextField id={"example-required"} name={"example-required"} label="Required" required error={error["example-required"]}/>
+                <TextField id={"example-required"} value={egg["example-required"]} name={"example-required"} label="Required" required error={error["example-required"]}/>
                 <FormHelperText error={error['example-required']}>{'required'}</FormHelperText>
             </FormControl>
             <FormControl  className={classes.textField} error={error['example-pattern']} >
@@ -51,7 +49,7 @@ const Form = props => {
                 <FormHelperText error={error['example-pattern']}>{'pattern include "$"'}</FormHelperText>
             </FormControl>
             <FormControl  className={classes.textField} error={error['example-maxlength']} >
-                <TextField id="example-maxlength" name="example-maxlength" label="Max length" InputProps={{ inputProps: { maxLength: 6 } }} error={error['example-maxlength']}/>
+                <TextField id="example-maxlength" value={egg['example-maxlength']} name="example-maxlength" label="Max length" InputProps={{ inputProps: { maxLength: 6 } }} error={error['example-maxlength']}/>
                 <FormHelperText error={error['example-maxlength']}>{'max length 6'}</FormHelperText>
             </FormControl>
             <FormControl  className={classes.textField} error={error['example-email']} >
@@ -63,7 +61,7 @@ const Form = props => {
                 <FormHelperText error={error['example-url']}>{'URL'}</FormHelperText>
             </FormControl>
             <FormControl  className={classes.textField} error={error['example-number']} >
-                <TextField id="example-number" name="example-number" type="number" label="Number" error={error['example-number']}/>
+                <TextField id="example-number" value={egg['example-number']} name="example-number" type="number" label="Number" error={error['example-number']}/>
                 <FormHelperText error={error['example-number']}>{'Number'}</FormHelperText>
             </FormControl>
             <FormControl  className={classes.textField} error={error['example-numbermax']} >
