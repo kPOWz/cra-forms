@@ -60,6 +60,53 @@ describe('Form', () => {
     });
 
     describe.each([
+        ['example-pattern', '$z', 'textbox'],
+        ['example-maxlength', '123', 'textbox'],
+        ['example-email', 'me@example.com', 'textbox'],
+        ['example-url', 'www.example.com', 'textbox'],
+        ['example-number', 11, 'spinbutton'],
+        ['example-numbermax', 9, 'spinbutton'],
+        ['example-numbermin', 3, 'spinbutton'],
+      ])('.when %s intereacted with', (name, changeValue, ariaRole) => {
+        it('should be a React controlled input', () => {
+            render(<Form />);
+
+            const observed = screen.getAllByRole(ariaRole);
+            const index = observed.findIndex((element) => 
+                element.getAttribute('id') === name);
+
+            fireEvent.change(observed[index], {target: {value: changeValue}});
+
+            expect(observed[index].value).toBe(changeValue.toString());
+            expect(observed[index]).toHaveValue(changeValue);
+            expect(screen.getByDisplayValue(changeValue.toString())).toBeInTheDocument();
+        });
+
+        it('should submit state', () => {
+            const spySubmit = jest.fn();
+            render(<Form onSubmitHandler={spySubmit}/>);
+
+            const observed = screen.getAllByRole(ariaRole);
+            const index = observed.findIndex((element) => 
+                element.getAttribute('id') === name);
+
+            fireEvent.change(observed[index], {target: {value: changeValue}});
+
+            const requirednput = screen.getByRole('textbox', {name: 'Required'});
+            fireEvent.change(requirednput, {target: {value: 'satisfy required'}});
+
+            const buttonSubmit = screen.getByRole('button', {name: 'do native validation'});
+            fireEvent.submit(buttonSubmit);
+
+            expect(spySubmit).toBeCalledTimes(1);
+            expect(spySubmit).toHaveBeenCalledWith({
+                'example-required': 'satisfy required',
+                [name]: changeValue.toString()
+            })
+        });
+    });
+
+    describe.each([
         ['example-required', 'takeMeAway', '', 'textbox'],
         ['example-email', 'notAnEmail', undefined, 'textbox'],
         ['example-url', 'notAURL', undefined, 'textbox'],
