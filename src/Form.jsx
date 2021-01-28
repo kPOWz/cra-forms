@@ -65,23 +65,28 @@ const Form = (props) => {
         }
     };
 
-    const handleChange = (event) => {
-        event.target.setCustomValidity('');
-        const newEgg = Object.assign({}, egg, { [event.target.name]: event.target.value });
-        setEgg(newEgg);
-        
-        const isPassValidationConstraints = event.target.checkValidity();
+    const applyJoiValidationConstraints = (newEgg) => {
         const eggMaybeConvertedForJoi = objectToObject(newEgg, (v) => v === '' ? undefined : v);
         const { error } = customConstraintOptionalExclusiveOr.validate(eggMaybeConvertedForJoi);
         const conststraintViolations = error && error.details[0].context.peers.reduce((current, item) => {
             current[item] = error ? error.message : false;
             return current;
         }, {});
-
-        setConstraintViolation(Object.assign(constraintViolationReset, { [event.target.name]: !isPassValidationConstraints }, conststraintViolations));
         refs.forEach(ref => {
             ref.current.childNodes[1].childNodes[0].setCustomValidity(error ? error.message : '');
         })
+        return conststraintViolations;
+    }
+
+    const handleChange = (event) => {
+        event.target.setCustomValidity('');
+        const newEgg = Object.assign({}, egg, { [event.target.name]: event.target.value });
+        setEgg(newEgg);
+        
+        const isPassValidationConstraints = event.target.checkValidity();
+        const joiConststraintViolations = applyJoiValidationConstraints(newEgg);
+
+        setConstraintViolation(Object.assign(constraintViolationReset, { [event.target.name]: !isPassValidationConstraints }, joiConststraintViolations));
     }
 
     return (
