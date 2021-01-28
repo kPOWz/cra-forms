@@ -209,6 +209,134 @@ describe('Form', () => {
         });
     });
 
+    it('should do complicated, custom constraint validation rule - fail - email', () => {
+        render(<Form />);
+        
+        const emailInput = screen.getByRole('textbox', {name: 'Email'});
+        const requirednput = screen.getByRole('textbox', {name: 'Required'});
+        const customInput = screen.getByRole('textbox', {name: 'Custom'});
+        fireEvent.change(requirednput, {target: {value: 'something'}});
+        fireEvent.change(emailInput, {target: {value: 'yes@example.com'}});
+        fireEvent.change(customInput, {target: {value: 'count to 100, come and count with me'}});
+
+        expect(customInput).toBeInvalid();
+        expect(customInput.parentElement).toHaveClass('Mui-error');
+        expect(customInput.parentElement.previousElementSibling).toHaveClass('Mui-error');
+        expect(screen.getByText('It\'s all very complicated "value" contains a conflict between optional exclusive peers [example-email, example-url, example-custom]')).toBeDefined();
+    });
+
+    it('should not attempt submit if anything on form invalid', () => {
+        const spySubmit = jest.fn();
+        render(<Form onSubmitHandler={spySubmit}/>);
+
+        const buttonSubmit = screen.getByRole('button', {name: 'do native validation'});
+        fireEvent.submit(buttonSubmit, {target: { checkValidity: () => false }});
+        
+        expect(spySubmit).toHaveBeenCalledTimes(0);
+    });
+
+    it('should do complicated, custom constraint validation rule - fail - url', () => {
+        render(<Form />);
+        
+        const urlInput = screen.getByRole('textbox', {name: 'URL'});
+        const requirednput = screen.getByRole('textbox', {name: 'Required'});
+        const customInput = screen.getByRole('textbox', {name: 'Custom'});
+        fireEvent.change(requirednput, {target: {value: 'something'}});
+        fireEvent.change(urlInput, {target: {value: 'https://www.example.com'}});
+        fireEvent.change(customInput, {target: {value: 'count to 100, come and count with me'}});
+
+        expect(customInput).toBeInvalid();
+        expect(customInput.parentElement).toHaveClass('Mui-error');
+        expect(customInput.parentElement.previousElementSibling).toHaveClass('Mui-error');
+        expect(screen.getByText('It\'s all very complicated "value" contains a conflict between optional exclusive peers [example-email, example-url, example-custom]')).toBeDefined();
+    });
+
+    describe.each([
+        ['Custom', 'Email', 'URL', 'anything', 'me@example.com'],
+        ['Email', 'URL', 'Custom', 'me@example.com', 'http://example.com'],
+        ['URL', 'Custom', 'Email', 'http://example.com', 'anything'],
+      ])('.when any constraint peers of %s invalid', (peerPrimary, peerWithUserInput, peerWithoutUserInput, firstContent, secondContent) => {
+        it('should use styles to communicate multi-input constraint violations', () => {
+            render(<Form />);
+        
+            const requirednput = screen.getByRole('textbox', {name: 'Required'});
+            const givenInputPeerFirst = screen.getByRole('textbox', {name: peerPrimary});
+            const givenInputPeerSecond = screen.getByRole('textbox', {name: peerWithUserInput});
+            const givenInputPeerThird = screen.getByRole('textbox', {name: peerWithoutUserInput});
+            fireEvent.change(requirednput, {target: {value: 'something'}});
+            fireEvent.change(givenInputPeerFirst, {target: {value: 'anything'}});
+            fireEvent.change(givenInputPeerSecond, {target: {value: 'anything constraint peer'}});
+
+            const constraintPeers = [givenInputPeerFirst, givenInputPeerSecond, givenInputPeerThird];
+    
+            constraintPeers.forEach(peer => {
+                expect(peer).toBeInvalid();
+                expect(peer.parentElement).toHaveClass('Mui-error');
+                expect(peer.parentElement.previousElementSibling).toHaveClass('Mui-error');
+            });
+        });
+
+        it('should remove styles used to communicate multi-input constraint violations from all peers', () => {
+            render(<Form />);
+        
+            const requirednput = screen.getByRole('textbox', {name: 'Required'});
+            const givenInputPeerFirst = screen.getByRole('textbox', {name: peerPrimary});
+            const givenInputPeerSecond = screen.getByRole('textbox', {name: peerWithUserInput});
+            const givenInputPeerThird = screen.getByRole('textbox', {name: peerWithoutUserInput});
+            fireEvent.change(requirednput, {target: {value: 'something'}});
+            fireEvent.change(givenInputPeerFirst, {target: {value: firstContent}});
+            fireEvent.change(givenInputPeerSecond, {target: {value: secondContent}});
+
+            const constraintPeers = [givenInputPeerFirst, givenInputPeerSecond, givenInputPeerThird];
+
+            constraintPeers.forEach(peer => {
+                expect(peer).toBeInvalid();
+                expect(peer.parentElement).toHaveClass('Mui-error');
+                expect(peer.parentElement.previousElementSibling).toHaveClass('Mui-error');
+            });
+
+            fireEvent.change(givenInputPeerFirst, {target: {value: ''}});
+
+            constraintPeers.forEach(peer => {
+                expect(peer).toBeValid();
+                expect(peer.parentElement).not.toHaveClass('Mui-error');
+                expect(peer.parentElement.previousElementSibling).not.toHaveClass('Mui-error');
+            }); 
+        });
+    });
+
+    it('should clear custom constraint validation error when corrected', () => {
+        render(<Form />);
+        
+        const urlInput = screen.getByRole('textbox', {name: 'URL'});
+        const requirednput = screen.getByRole('textbox', {name: 'Required'});
+        const customInput = screen.getByRole('textbox', {name: 'Custom'});
+        fireEvent.change(requirednput, {target: {value: 'something'}});
+        fireEvent.change(urlInput, {target: {value: 'https://www.example.com'}});
+        fireEvent.change(customInput, {target: {value: 'c'}});
+
+        expect(customInput).toBeInvalid();
+
+        fireEvent.change(customInput, {target: {value: ''}});
+        expect(customInput).toBeValid();
+    });
+
+    it('should do complicated, custom constraint validation rule - pass', () => {
+        const spySubmit = jest.fn();
+        render(<Form onSubmitHandler={spySubmit}/>);
+        
+        const requirednput = screen.getByRole('textbox', {name: 'Required'});
+        const customInput = screen.getByRole('textbox', {name: 'Custom'});
+        fireEvent.change(requirednput, {target: {value: 'something'}});
+        fireEvent.change(customInput, {target: {value: 'count to 100, come and count with me'}});
+
+        expect(customInput).toBeValid();
+
+        const buttonSubmit = screen.getByRole('button', {name: 'do native validation'});
+        fireEvent.submit(buttonSubmit);
+        expect(spySubmit).toHaveBeenCalledTimes(1);
+    });
+
     it('should always assgin TextField an id for accessibility', () => {
         render(<Form />);
 
