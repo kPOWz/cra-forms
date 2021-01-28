@@ -102,41 +102,41 @@ const Form = (props) => {
 
     return (
         <form className={classes.root} onChange={handleChange}>
-            <FormControl className={classes.textField} error={constraintViolation["example-required"]}>
-                <TextField id={"example-required"} value={egg["example-required"]} name={"example-required"} label="Required" required error={constraintViolation["example-required"]} />
-                <FormHelperText error={constraintViolation['example-required']}>{'required'}</FormHelperText>
+            <FormControl className={classes.textField} error={!!constraintViolation["example-required"]}>
+                <TextField id={"example-required"} value={egg["example-required"]} name={"example-required"} label="Required" required error={!!constraintViolation["example-required"]} />
+                <FormHelperText error={!!constraintViolation['example-required']}>{'required'}</FormHelperText>
             </FormControl>
-            <FormControl className={classes.textField} error={constraintViolation['example-pattern']} >
-                <TextField id="example-pattern" value={egg["example-pattern"]} name="example-pattern" label="Pattern" InputProps={{ inputProps: { pattern: "\\$[a-z]" } }} error={constraintViolation["example-pattern"]} />
-                <FormHelperText error={constraintViolation['example-pattern']}>{'pattern "$" followed by an alpha character'}</FormHelperText>
+            <FormControl className={classes.textField} error={!!constraintViolation['example-pattern']} >
+                <TextField id="example-pattern" value={egg["example-pattern"]} name="example-pattern" label="Pattern" InputProps={{ inputProps: { pattern: "\\$[a-z]" } }} error={!!constraintViolation["example-pattern"]} />
+                <FormHelperText error={!!constraintViolation['example-pattern']}>{'pattern "$" followed by an alpha character'}</FormHelperText>
             </FormControl>
-            <FormControl className={classes.textField} error={constraintViolation['example-maxlength']} >
-                <TextField id="example-maxlength" value={egg['example-maxlength']} name="example-maxlength" label="Max length" InputProps={{ inputProps: { maxLength: 6 } }} error={constraintViolation['example-maxlength']} />
-                <FormHelperText error={constraintViolation['example-maxlength']}>{'max length 6'}</FormHelperText>
+            <FormControl className={classes.textField} error={!!constraintViolation['example-maxlength']} >
+                <TextField id="example-maxlength" value={egg['example-maxlength']} name="example-maxlength" label="Max length" InputProps={{ inputProps: { maxLength: 6 } }} error={!!constraintViolation['example-maxlength']} />
+                <FormHelperText error={!!constraintViolation['example-maxlength']}>{'max length 6'}</FormHelperText>
             </FormControl>
-            <FormControl className={classes.textField} error={constraintViolation['example-email']} >
-                <TextField id="example-email" ref={refExampleEmail} value={egg["example-email"]} name="example-email" type="email" label="Email" error={constraintViolation['example-email']} />
-                <FormHelperText error={constraintViolation['example-email']}>{'email'}</FormHelperText>
+            <FormControl className={classes.textField} error={!!constraintViolation['example-email']} >
+                <TextField id="example-email" ref={refExampleEmail} value={egg["example-email"]} name="example-email" type="email" label="Email" error={!!constraintViolation['example-email']} />
+                <FormHelperText error={!!constraintViolation['example-email']}>{'email'}</FormHelperText>
             </FormControl>
-            <FormControl className={classes.textField} error={constraintViolation['example-url']} >
-                <TextField id="example-url" ref={refExampleUrl} value={egg["example-url"]} name="example-url" type="url" label="URL" error={constraintViolation['example-url']} />
-                <FormHelperText error={constraintViolation['example-url']}>{'URL'}</FormHelperText>
+            <FormControl className={classes.textField} error={!!constraintViolation['example-url']} >
+                <TextField id="example-url" ref={refExampleUrl} value={egg["example-url"]} name="example-url" type="url" label="URL" error={!!constraintViolation['example-url']} />
+                <FormHelperText error={!!constraintViolation['example-url']}>{'URL'}</FormHelperText>
             </FormControl>
-            <FormControl className={classes.textField} error={constraintViolation['example-number']} >
-                <TextField id="example-number" value={egg['example-number']} name="example-number" type="number" label="Number" error={constraintViolation['example-number']} />
-                <FormHelperText error={constraintViolation['example-number']}>{'Number'}</FormHelperText>
+            <FormControl className={classes.textField} error={!!constraintViolation['example-number']} >
+                <TextField id="example-number" value={egg['example-number']} name="example-number" type="number" label="Number" error={!!constraintViolation['example-number']} />
+                <FormHelperText error={!!constraintViolation['example-number']}>{'Number'}</FormHelperText>
             </FormControl>
-            <FormControl className={classes.textField} error={constraintViolation['example-numbermax']} >
-                <TextField id="example-numbermax" value={egg["example-numbermax"]} name="example-numbermax" type="number" label="Number max" InputProps={{ inputProps: { max: 10 } }} error={constraintViolation['example-numbermax']} />
-                <FormHelperText error={constraintViolation['example-numbermax']}>{'Number max'}</FormHelperText>
+            <FormControl className={classes.textField} error={!!constraintViolation['example-numbermax']} >
+                <TextField id="example-numbermax" value={egg["example-numbermax"]} name="example-numbermax" type="number" label="Number max" InputProps={{ inputProps: { max: 10 } }} error={!!constraintViolation['example-numbermax']} />
+                <FormHelperText error={!!constraintViolation['example-numbermax']}>{'Number max'}</FormHelperText>
             </FormControl>
-            <FormControl className={classes.textField} error={constraintViolation['example-numbermin']} >
-                <TextField id="example-numbermin" value={egg["example-numbermin"]} name="example-numbermin" type="number" label="Number min" InputProps={{ inputProps: { min: 3 } }} error={constraintViolation['example-numbermin']} />
-                <FormHelperText error={constraintViolation['example-numbermin']}>{'Number min'}</FormHelperText>
+            <FormControl className={classes.textField} error={!!constraintViolation['example-numbermin']} >
+                <TextField id="example-numbermin" value={egg["example-numbermin"]} name="example-numbermin" type="number" label="Number min" InputProps={{ inputProps: { min: 3 } }} error={!!constraintViolation['example-numbermin']} />
+                <FormHelperText error={!!constraintViolation['example-numbermin']}>{'Number min'}</FormHelperText>
             </FormControl>
-            <FormControl className={classes.textField} error={constraintViolation['example-custom']} >
-                <TextField id="example-custom" ref={refExampleCustom} value={egg["example-custom"]} name="example-custom" label="Custom" error={constraintViolation['example-custom']} />
-                <FormHelperText error={constraintViolation['example-custom']}>{`It's all very complicated ${constraintViolation['example-custom']}`}</FormHelperText>
+            <FormControl className={classes.textField} error={!!constraintViolation['example-custom']} >
+                <TextField id="example-custom" ref={refExampleCustom} value={egg["example-custom"]} name="example-custom" label="Custom" error={!!constraintViolation['example-custom']} />
+                <FormHelperText error={!!constraintViolation['example-custom']}>{`It's all very complicated ${constraintViolation['example-custom']}`}</FormHelperText>
             </FormControl>
             <Button color="primary"
                 onSubmit={handleSubmit}
