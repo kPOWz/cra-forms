@@ -33,13 +33,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Form = (props) => {
-    const [constraintViolation, setConstraintViolation] = React.useState({});
-    const [egg, setEgg] = React.useState({});
-    const refExampleEmail = React.useRef()
-    const refExampleUrl = React.useRef()
-    const refExampleCustom = React.useRef();
-    const refs = [refExampleEmail, refExampleUrl, refExampleCustom];
-    const classes = useStyles();
     const constraintViolationReset = {
         'example-required': false,
         'example-pattern': false,
@@ -51,6 +44,24 @@ const Form = (props) => {
         'example-numbermin': false,
         'example-custom': false
     };
+    const otherReset = {
+        'example-required': '',
+        'example-pattern': '',
+        'example-maxlength': '',
+        'example-email': '',
+        'example-url': '',
+        'example-number': '',
+        'example-numbermax': '',
+        'example-numbermin': '',
+        'example-custom': ''
+    };
+    const [constraintViolation, setConstraintViolation] = React.useState(constraintViolationReset);
+    const [egg, setEgg] = React.useState(otherReset);
+    const refExampleEmail = React.useRef()
+    const refExampleUrl = React.useRef()
+    const refExampleCustom = React.useRef();
+    const refs = [refExampleEmail, refExampleUrl, refExampleCustom];
+    const classes = useStyles();
     const objectToObject = (obj, fn) => Object.fromEntries(
         Object.entries(obj).map(
             ([k, v], i) => [k, fn(v, k, i)]

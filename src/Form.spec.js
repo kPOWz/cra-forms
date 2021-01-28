@@ -99,10 +99,11 @@ describe('Form', () => {
             fireEvent.submit(buttonSubmit);
 
             expect(spySubmit).toBeCalledTimes(1);
-            expect(spySubmit).toHaveBeenCalledWith({
+            expect(spySubmit).toHaveBeenCalledWith(
+                expect.objectContaining({
                 'example-required': 'satisfy required',
                 [name]: changeValue.toString()
-            })
+            }))
         });
     });
 
